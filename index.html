@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>法律服务</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif; background:#F0F4F8; color:#1A202C; min-height:100vh; padding-bottom:70px; }
+.header { background:linear-gradient(135deg,#1A365D,#2B6CB0); color:#fff; padding:16px; text-align:center; font-size:18px; font-weight:bold; letter-spacing:2px; position:sticky; top:0; z-index:50; box-shadow:0 2px 8px rgba(26,54,93,.3); }
+.subheader { background:#1A365D; color:#90CDF4; font-size:11px; text-align:center; padding:5px 0; letter-spacing:1px; }
+.top-bar { display:flex; gap:8px; padding:10px 16px; max-width:700px; margin:0 auto; flex-wrap:wrap; }
+.top-btn { flex:1; min-width:70px; background:#fff; border:1.5px solid #E2E8F0; border-radius:10px; padding:9px 6px; text-align:center; font-size:12px; cursor:pointer; text-decoration:none; color:#1A365D; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.top-btn:active { background:#EBF8FF; transform:scale(.98); }
+.search-bar { padding:0 16px 6px; max-width:700px; margin:0 auto; }
+.search-bar input { width:100%; padding:11px 16px; border:1.5px solid #CBD5E0; border-radius:24px; font-size:14px; outline:none; background:#fff; box-sizing:border-box; }
+.search-bar input:focus { border-color:#2B6CB0; }
+.section { padding:14px 16px; max-width:700px; margin:0 auto; }
+.section-title { font-size:15px; font-weight:bold; color:#1A365D; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.section-title::before { content:''; display:inline-block; width:3px; height:16px; background:#C19A3B; border-radius:2px; }
+.notice-box { background:#fff; border-left:4px solid #C19A3B; border-radius:10px; padding:13px 15px; margin-bottom:16px; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+.notice-title { font-weight:bold; color:#1A365D; font-size:14px; margin-bottom:4px; }
+.notice-content { font-size:13px; color:#4A5568; line-height:1.6; }
+.notice-more { font-size:12px; color:#2B6CB0; text-align:right; margin-top:6px; cursor:pointer; }
+.card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:12px; }
+.card { background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 1px 5px rgba(0,0,0,.07); cursor:pointer; transition:transform .1s; }
+.card:active { transform:scale(.97); }
+.card-img { width:100%; height:130px; object-fit:cover; background:#EBF8FF; display:flex; align-items:center; justify-content:center; font-size:36px; }
+.card-img img { width:100%; height:100%; object-fit:cover; }
+.card-body { padding:10px 12px; }
+.card-name { font-weight:bold; font-size:14px; color:#1A365D; margin-bottom:4px; }
+.card-meta { font-size:12px; color:#718096; line-height:1.6; }
+.tag { display:inline-block; padding:2px 7px; border-radius:10px; font-size:11px; background:#EBF8FF; color:#2B6CB0; margin-top:4px; }
+.tag.green { background:#F0FFF4; color:#2E7D32; }
+.tag.orange { background:#FFFAF0; color:#C19A3B; }
+.tag.red { background:#FFF5F5; color:#C53030; }
+.empty { text-align:center; color:#CBD5E0; padding:24px; font-size:13px; }
+.footer { text-align:center; padding:20px; font-size:12px; color:#A0AEC0; border-top:1px solid #E2E8F0; margin-top:20px; }
+.footer a { color:#2B6CB0; text-decoration:none; }
+.toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.75); color:#fff; padding:10px 24px; border-radius:10px; font-size:14px; z-index:99999; pointer-events:none; white-space:nowrap; }
+.cloud-btn { border-color:#E2E8F0 !important; color:#888 !important; }
+.cloud-btn.connected { border-color:#48BB78 !important; color:#2E7D32 !important; }
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1A365D">
+<script>
+window.imgErr=function(img){try{img.onerror=null;img.src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 220'><rect width='280' height='220' fill='%23EBF8FF'/><text x='140' y='130' font-size='40' text-anchor='middle' fill='%232B6CB0'>⚖</text></svg>"}catch(e){}};
+</script>
+</head>
+<body>
+<div class="header">⚖ 法律服务公共平台</div>
+<div class="subheader">公正 · 专业 · 高效 · 便捷</div>
+<div class="top-bar">
+  <a class="top-btn" href="login.html">👤 登录</a>
+  <a class="top-btn" href="register.html">📝 注册</a>
+  <a class="top-btn" href="profile.html">👥 我的</a>
+  <a class="top-btn" href="search.html">🔍 搜索</a>
+  <a id="cloudBtn" class="top-btn cloud-btn" href="javascript:void(0)" onclick="openCloudModal()">☁️ 云端</a>
+</div>
+<div class="search-bar">
+  <input type="search" placeholder="🔍 搜索律师、律所、案件类型…" onclick="location.href='search.html'">
+</div>
+<div class="section">
+  <div class="section-title">📢 公告</div>
+  <div id="noticeBox">
+    <div class="notice-box">
+      <div class="notice-title">欢迎使用法律服务公共平台</div>
+      <div class="notice-content">点击「注册」提交您的法律需求，专业律师将及时为您提供服务。</div>
+      <div class="notice-more" onclick="location.href='notice.html'">查看全部公告 →</div>
+    </div>
+  </div>
+
+  <div class="section-title" id="needTitle">👥 用户需求</div>
+  <div id="needBox" class="card-grid"></div>
+
+  <div class="section-title" id="assistTitle">📋 律师助理</div>
+  <div id="assistBox" class="card-grid"></div>
+
+  <div class="section-title" id="lawyerTitle">⚖️ 执业律师</div>
+  <div id="lawyerBox" class="card-grid"></div>
+</div>
+<div class="footer">
+  法律服务公共平台 · 联系电话：<a href="tel:13913627704">13913627704</a>
+</div>
+
+<script>
+function toast(msg){var el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(function(){el.remove()},2200)}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderNotice(list){
+  var box=document.getElementById('noticeBox');
+  if(!list||!list.length)return;
+  var sorted=list.slice().sort(function(a,b){return(b.time||0)-(a.time||0)});
+  var n=sorted[0];
+  var photos='';
+  if(n.photos&&n.photos.length>0){
+    photos='<div style="display:flex;gap:4px;margin-top:8px;">';
+    for(var i=0;i<n.photos.length;i++)photos+='<img src="'+esc(n.photos[i])+'" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" onerror="imgErr(this)">';
+    photos+='</div>';
+  }
+  box.innerHTML='<div class="notice-box"><div class="notice-title">'+esc(n.title)+'</div><div class="notice-content">'+esc(n.content)+'</div>'+photos+'<div class="notice-more" onclick="location.href=\'notice.html\'">查看全部公告 →</div></div>';
+}
+function renderCard(item,type){
+  var cls={user_need:'orange',lawyer_assistant:'',lawyer:'green'}[type]||'';
+  var photosHtml='';
+  if(item.photos&&item.photos.length>0){
+    photosHtml='<div class="card-img"><img src="'+esc(item.photos[0])+'" onerror="imgErr(this)" alt=""></div>';
+  } else {
+    var icon={user_need:'📋',lawyer_assistant:'📎',lawyer:'⚖'}[type]||'📋';
+    photosHtml='<div class="card-img" style="background:#EBF8FF;">'+icon+'</div>';
+  }
+  var tags='';
+  if(item.caseType)tags='<div><span class="tag '+cls+'">'+esc(item.caseType)+'</span></div>';
+  var meta='';
+  if(item.firm)meta+='🏛 '+esc(item.firm)+'<br>';
+  if(item.address)meta+='📍 '+esc(item.address)+'<br>';
+  if(item.phone)meta+='📞 '+esc(item.phone);
+  if(item.caseDesc)meta+=esc(item.caseDesc).substring(0,40)+(item.caseDesc.length>40?'…':'');
+  return'<div class="card" onclick="location.href=\'detail.html?type='+encodeURIComponent(type)+'&id='+encodeURIComponent(item.id||'')+'\'">'+photosHtml+'<div class="card-body"><div class="card-name">'+esc(item.name)+'</div><div class="card-meta">'+meta+'</div>'+tags+'</div></div>';
+}
+function renderList(list,boxId,type){
+  var box=document.getElementById(boxId);
+  var filtered=(list||[]).filter(function(t){return t.status==='已通过'});
+  if(!filtered.length){box.innerHTML='<div class="empty">暂无内容</div>';return}
+  box.innerHTML=filtered.map(function(v){return renderCard(v,type)}).join('');
+}
+var allNeeds=[],allAssists=[],allLawyers=[],allNotices=[];
+function refreshHome(){
+  JB.get('user_needs',function(d){allNeeds=d||[];renderList(allNeeds,'needBox','user_need')});
+  JB.get('lawyer_assistants',function(d){allAssists=d||[];renderList(allAssists,'assistBox','lawyer_assistant')});
+  JB.get('lawyers',function(d){allLawyers=d||[];renderList(allLawyers,'lawyerBox','lawyer')});
+  JB.get('notices',function(d){allNotices=d||[];renderNotice(allNotices)});
+}
+function init(){
+  refreshHome();
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshHome()});
+  window.addEventListener('pageshow',function(){refreshHome()});
+}
+function cloudIsConnected(){try{var c=JSON.parse(localStorage.getItem('law_cloud_cfg')||'null');return!!(c&&c.token)}catch(e){return false}}
+function renderCloudBadge(){
+  var el=document.getElementById('cloudBtn');
+  if(!el)return;
+  if(cloudIsConnected()){el.textContent='☁️ 已连';el.className='top-btn cloud-btn connected'}
+  else{el.textContent='☁️ 云端';el.className='top-btn cloud-btn'}
+}
+function openCloudModal(){
+  var modal=document.getElementById('cloudModal');
+  var body=document.getElementById('cloudModalBody');
+  var cfg=null;try{cfg=JSON.parse(localStorage.getItem('law_cloud_cfg')||'null')}catch(e){}
+  if(cfg&&cfg.token){
+    body.innerHTML='<h3 style="color:#1A365D;margin-bottom:10px;">✅ 云端已连接</h3><p style="color:#666;font-size:13px;margin-bottom:14px;">仓库：<b>'+(cfg.repo||'law-service-data')+'</b></p>'+
+      '<button class="btn" onclick="forceSyncNow()">📤 立即同步</button>'+
+      '<button class="btn-ghost" onclick="disconnectCloud()">断开云端</button>'+
+      '<button class="btn-ghost" onclick="closeCloudModal()">关闭</button>';
+  }else{
+    body.innerHTML='<h3 style="color:#1A365D;margin-bottom:8px;">☁️ 连接云端</h3>'+
+      '<p style="color:#666;font-size:13px;line-height:1.6;margin-bottom:12px;">粘贴连接码（GitHub Token）即可连接，数据自动同步。</p>'+
+      '<input id="cloudTokenInput" placeholder="ghp_..." autocomplete="off" style="width:100%;padding:11px 14px;border:1.5px solid #CBD5E0;border-radius:10px;font-size:14px;margin-bottom:12px;box-sizing:border-box;">'+
+      '<button class="btn" onclick="doConnectFromModal()">连接云端</button>';
+    setTimeout(function(){var i=document.getElementById('cloudTokenInput');if(i)i.focus()},50);
+  }
+  modal.style.display='flex';
+}
+function closeCloudModal(){var m=document.getElementById('cloudModal');if(m)m.style.display='none'}
+function doConnectFromModal(){
+  var i=document.getElementById('cloudTokenInput');
+  var t=i?i.value.trim():'';
+  if(!t){toast('请输入连接码');return}
+  toast('正在验证…');
+  fetch('https://api.github.com/repos/chenhaijun20260824/law-service-data',{headers:{'Authorization':'token '+t,'Accept':'application/vnd.github+json'}}).then(function(r){
+    if(r.ok){try{localStorage.setItem('law_cloud_cfg',JSON.stringify({token:t,owner:'chenhaijun20260824',repo:'law-service-data',branch:'main',path:'data'}))}catch(e){toast('当前环境禁用了localStorage，无法保存连接');return}closeCloudModal();toast('已连接！');setTimeout(function(){location.reload()},700)}
+    else{toast('连接码无效 ✗')}
+  }).catch(function(){toast('连接失败 ✗')});
+}
+function forceSyncNow(){if(!window.JB||!window.RoseSyncAdapter){toast('未连接云端');return}toast('正在同步…');JB.syncAll(function(){toast('同步完成 ✓')})}
+function disconnectCloud(){try{localStorage.removeItem('law_cloud_cfg');localStorage.removeItem('law_server_online')}catch(e){}toast('已断开');renderCloudBadge();closeCloudModal()}
+renderCloudBadge();
+init();
+</script>
+
+<div id="cloudModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeCloudModal()">
+  <div style="background:#fff;border-radius:16px;max-width:400px;width:100%;padding:22px;box-shadow:0 10px 40px rgba(0,0,0,.2);">
+    <div id="cloudModalBody"></div>
+  </div>
+</div>
+<style>
+.btn{width:100%;padding:12px;background:linear-gradient(135deg,#1A365D,#2B6CB0);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:8px;box-sizing:border-box;}
+.btn:active{transform:scale(.98)}
+.btn-ghost{width:100%;padding:10px;background:#fff;color:#1A365D;border:1.5px solid #1A365D;border-radius:10px;font-size:14px;cursor:pointer;margin-bottom:6px;box-sizing:border-box;}
+</style>
+<script src="cloud-config.js"></script>
+<script src="cloud-api.js"></script>
+</body>
+</html>
