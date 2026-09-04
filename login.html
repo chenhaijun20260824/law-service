@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>登录 - 法律服务</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif; background:#F0F4F8; color:#1A202C; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+.logo-area { text-align:center; margin-bottom:30px; }
+.logo-icon { font-size:56px; }
+.logo-text { font-size:22px; font-weight:bold; color:#1A365D; margin-top:8px; letter-spacing:3px; }
+.logo-sub { font-size:12px; color:#718096; margin-top:4px; }
+.card { background:#fff; border-radius:16px; padding:28px 24px; width:100%; max-width:380px; box-shadow:0 4px 20px rgba(26,54,93,.1); }
+.card h2 { text-align:center; color:#1A365D; font-size:18px; margin-bottom:20px; }
+input { width:100%; padding:12px 14px; border:1.5px solid #CBD5E0; border-radius:10px; font-size:15px; margin-bottom:12px; box-sizing:border-box; outline:none; background:#F7FAFC; }
+input:focus { border-color:#2B6CB0; background:#fff; }
+.btn { width:100%; padding:13px; background:linear-gradient(135deg,#1A365D,#2B6CB0); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:6px; }
+.btn:active { transform:scale(.98); }
+.btn-ghost { background:#fff; color:#1A365D; border:1.5px solid #1A365D; font-size:14px; padding:10px; margin-top:10px; }
+.link { text-align:center; margin-top:16px; font-size:13px; color:#718096; }
+.link a { color:#2B6CB0; text-decoration:none; }
+.toast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.75); color:#fff; padding:10px 24px; border-radius:10px; font-size:14px; z-index:99999; pointer-events:none; }
+.error { color:#C53030; font-size:13px; margin-bottom:10px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="logo-area">
+  <div class="logo-icon">⚖</div>
+  <div class="logo-text">法律服务</div>
+  <div class="logo-sub">公正 · 专业 · 高效</div>
+</div>
+<div class="card">
+  <h2>用户登录</h2>
+  <div id="errorMsg" class="error" style="display:none;"></div>
+  <input id="phoneInput" type="tel" placeholder="📱 请输入手机号" maxlength="11">
+  <input id="pwdInput" type="password" placeholder="🔒 请输入密码">
+  <button class="btn" onclick="doLogin()">登 录</button>
+  <div class="link">还没有账号？<a href="register.html">立即注册 →</a></div>
+  <button class="btn btn-ghost" onclick="location.href='index.html'">返回首页</button>
+</div>
+<script>
+var JB={BINS:{accounts:'accounts',lawyer_assistants:'lawyer_assistants',lawyers:'lawyers',user_needs:'user_needs',notices:'notices',audit_log:'audit_log',accepted_cases:'accepted_cases'},_adapterNow:function(){try{return window.RoseSyncAdapter||null}catch(e){return null}},_storageKey:function(k){return'law_'+k},_unwrap:function(v){var d=0;while(d<5&&v&&typeof v==='object'&&'record' in v&&Object.keys(v).length<=2){v=v.record;d++}return v},_getLocal:function(k){try{var v=localStorage.getItem(this._storageKey(k));return v?this._unwrap(JSON.parse(v)):[]}catch(e){return[]}},_setLocal:function(k,d){try{localStorage.setItem(this._storageKey(k),JSON.stringify(d));return true}catch(e){if(typeof toast==='function')toast('本地存储已满');return false}},_mergeLists:function(la,ca){var ds={};this.getDeleted('').forEach(function(id){ds[id]=true});var map={},nk=[];function ts(it){return(it&&(it.updateTime||it.time||it.registerTime))||0}function ko(it){return it&&(it.id||it.account||it.accountId)}function ad(it){if(!it||typeof it!=='object')return;var k=ko(it);if(k&&ds[k])return;if(!k){nk.push(it);return}if(!map[k])map[k]=[it,ts(it)];else if(ts(it)>map[k][1])map[k]=[it,ts(it)]}(ca||[]).forEach(ad);(la||[]).forEach(ad);var out=[];Object.keys(map).forEach(function(k){out.push(map[k][0])});return out.concat(nk)},get:function(k,cb){var lo=this._getLocal(k),ad=this._adapterNow();if(ad&&typeof ad.pull==='function'){var st=false;var fin=function(ca,ok){if(st)return;st=true;if(ok&&Array.isArray(ca)){var m=this._mergeLists(lo,ca);this._setLocal(k,m);cb(m,true,ca)}else cb(lo,false,lo)}.bind(this);ad.pull(k,fin);setTimeout(function(){fin(lo,false)},2500)}else setTimeout(function(){cb(lo,true,lo)},0)},put:function(k,d,cb){this._setLocal(k,d);var ad=this._adapterNow();if(ad&&typeof ad.push==='function'){var st=false;var fin=function(ok){if(st)return;st=true;if(typeof cb==='function')cb(ok)};ad.push(k,d,fin);setTimeout(function(){fin(false)},2500)}else if(typeof cb==='function')setTimeout(function(){cb(true)},0)},syncAll:function(cb){var ad=this._adapterNow();if(!ad){if(typeof cb==='function')cb(true);return}var self=this,keys=['accounts','lawyer_assistants','lawyers','user_needs','notices','audit_log','accepted_cases'],pend=keys.length;function dn(){pend--;if(pend<=0&&typeof cb==='function')cb(true)}keys.forEach(function(k){var snap=self._getLocal(k);self.get(k,function(m,ok,raw){if(!ok){dn();return}raw=raw||[];var mg=self._mergeLists(snap,raw);if(JSON.stringify(mg)===JSON.stringify(raw))dn();else self.put(k,mg,dn)})})},getCurrentUser:function(){try{var r=localStorage.getItem('law_current_user');return r?JSON.parse(r):null}catch(e){return null}},genId:function(){var ts=Date.now().toString(36);var r1=Math.random().toString(36).slice(2);var r2='';try{r2=crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}catch(e){r2=Math.random().toString(36).slice(2)}return ts+r1+r2},_deletedKey:function(k){return'law_deleted_'+k},getDeleted:function(k){try{return JSON.parse(localStorage.getItem(this._deletedKey(k))||'[]')}catch(e){return[]}},markDeleted:function(k,id){if(!id)return;var d=this.getDeleted(k);if(d.indexOf(id)<0)d.push(id);try{localStorage.setItem(this._deletedKey(k),JSON.stringify(d))}catch(e){}}};
+setTimeout(function(){try{JB.syncAll()}catch(e){}},800);
+window.onerror=function(m,s,l,c){try{var d=document.createElement('div');d.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#c00;color:#fff;font-size:12px;padding:8px;z-index:99999;white-space:pre-wrap';d.textContent='页面报错: '+m+' ('+l+':'+c+')';(document.body||document.documentElement).appendChild(d)}catch(e){}return false};
+function toast(msg){var el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(function(){el.remove()},2200)}
+function doLogin(){
+  var phone=document.getElementById('phoneInput').value.trim();
+  var pwd=document.getElementById('pwdInput').value;
+  var err=document.getElementById('errorMsg');
+  err.style.display='none';
+  if(!phone||phone.length<11){err.textContent='请输入正确的手机号';err.style.display='block';return}
+  if(!pwd){err.textContent='请输入密码';err.style.display='block';return}
+  JB.get('accounts',function(data){
+    data=data||[];
+    var acct=data.find(function(a){return a.phone===phone});
+    if(!acct){err.textContent='账号不存在，请先注册';err.style.display='block';return}
+    if(acct.password!==pwd){err.textContent='密码错误';err.style.display='block';return}
+    try{localStorage.setItem('law_current_user',JSON.stringify(acct))}catch(e){}
+    toast('登录成功 ✓');
+    setTimeout(function(){location.href='index.html'},700);
+  });
+}
+document.getElementById('pwdInput').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin()});
+</script>
+<script src="cloud-config.js"></script>
+<script src="cloud-api.js"></script>
+</body>
+</html>
