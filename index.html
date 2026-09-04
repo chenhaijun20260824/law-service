@@ -84,6 +84,7 @@ window.imgErr=function(img){try{img.onerror=null;img.src="data:image/svg+xml;utf
 </div>
 
 <script>
+var JB={BINS:{accounts:'accounts',lawyer_assistants:'lawyer_assistants',lawyers:'lawyers',user_needs:'user_needs',notices:'notices',audit_log:'audit_log',accepted_cases:'accepted_cases'},_adapterNow:function(){try{return window.RoseSyncAdapter||null}catch(e){return null}},_storageKey:function(k){return'law_'+k},_unwrap:function(v){var d=0;while(d<5&&v&&typeof v==='object'&&'record' in v&&Object.keys(v).length<=2){v=v.record;d++}return v},_getLocal:function(k){try{var v=localStorage.getItem(this._storageKey(k));return v?this._unwrap(JSON.parse(v)):[]}catch(e){return[]}},_setLocal:function(k,d){try{localStorage.setItem(this._storageKey(k),JSON.stringify(d));return true}catch(e){if(typeof toast==='function')toast('存储满');return false}},_mergeLists:function(la,ca){var ds={};this.getDeleted('').forEach(function(id){ds[id]=true});var map={},nk=[];function ts(it){return(it&&(it.updateTime||it.time||it.registerTime))||0}function ko(it){return it&&(it.id||it.account||it.accountId)}function ad(it){if(!it||typeof it!=='object')return;var k=ko(it);if(k&&ds[k])return;if(!k){nk.push(it);return}if(!map[k])map[k]=[it,ts(it)];else if(ts(it)>map[k][1])map[k]=[it,ts(it)]}(ca||[]).forEach(ad);(la||[]).forEach(ad);var out=[];Object.keys(map).forEach(function(k){out.push(map[k][0])});return out.concat(nk)},get:function(k,cb){var lo=this._getLocal(k),ad=this._adapterNow();if(ad&&typeof ad.pull==='function'){var st=false;var fin=function(ca,ok){if(st)return;st=true;if(ok&&Array.isArray(ca)){var m=this._mergeLists(lo,ca);this._setLocal(k,m);cb(m,true,ca)}else cb(lo,false,lo)}.bind(this);ad.pull(k,fin);setTimeout(function(){fin(lo,false)},2500)}else setTimeout(function(){cb(lo,true,lo)},0)},put:function(k,d,cb){this._setLocal(k,d);var ad=this._adapterNow();if(ad&&typeof ad.push==='function'){var st=false;var fin=function(ok){if(st)return;st=true;if(typeof cb==='function')cb(ok)};ad.push(k,d,fin);setTimeout(function(){fin(false)},2500)}else if(typeof cb==='function')setTimeout(function(){cb(true)},0)},syncAll:function(cb){var ad=this._adapterNow();if(!ad){if(typeof cb==='function')cb(true);return}var self=this,keys=['accounts','lawyer_assistants','lawyers','user_needs','notices','audit_log','accepted_cases'],pend=keys.length;function dn(){pend--;if(pend<=0&&typeof cb==='function')cb(true)}keys.forEach(function(k){var snap=self._getLocal(k);self.get(k,function(m,ok,raw){if(!ok){dn();return}raw=raw||[];var mg=self._mergeLists(snap,raw);if(JSON.stringify(mg)===JSON.stringify(raw))dn();else self.put(k,mg,dn)})})},getCurrentUser:function(){try{var r=localStorage.getItem('law_current_user');return r?JSON.parse(r):null}catch(e){return null}},genId:function(){var ts=Date.now().toString(36);var r1=Math.random().toString(36).slice(2);var r2='';try{r2=crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}catch(e){r2=Math.random().toString(36).slice(2)}return ts+r1+r2},_deletedKey:function(k){return'law_deleted_'+k},getDeleted:function(k){try{return JSON.parse(localStorage.getItem(this._deletedKey(k))||'[]')}catch(e){return[]}},markDeleted:function(k,id){if(!id)return;var d=this.getDeleted(k);if(d.indexOf(id)<0)d.push(id);try{localStorage.setItem(this._deletedKey(k),JSON.stringify(d))}catch(e){}}}
 function toast(msg){var el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(function(){el.remove()},2200)}
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function renderNotice(list){
@@ -174,7 +175,6 @@ function doConnectFromModal(){
 function forceSyncNow(){if(!window.JB||!window.RoseSyncAdapter){toast('未连接云端');return}toast('正在同步…');JB.syncAll(function(){toast('同步完成 ✓')})}
 function disconnectCloud(){try{localStorage.removeItem('law_cloud_cfg');localStorage.removeItem('law_server_online')}catch(e){}toast('已断开');renderCloudBadge();closeCloudModal()}
 renderCloudBadge();
-init();
 </script>
 
 <div id="cloudModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeCloudModal()">
@@ -189,5 +189,6 @@ init();
 </style>
 <script src="cloud-config.js"></script>
 <script src="cloud-api.js"></script>
+<script>try{init()}catch(e){console.error("init failed",e)}</script>
 </body>
 </html>
