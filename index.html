@@ -116,11 +116,11 @@ function renderCard(item,type){
   if(item.address)meta+='📍 '+esc(item.address)+'<br>';
   if(item.phone)meta+='📞 '+esc(item.phone);
   if(item.caseDesc)meta+=esc(item.caseDesc).substring(0,40)+(item.caseDesc.length>40?'…':'');
-  return'<div class="card" onclick="location.href=\'detail.html?type='+encodeURIComponent(type)+'&id='+encodeURIComponent(item.id||'')+'\'">'+photosHtml+'<div class="card-body"><div class="card-name">'+esc(item.name)+'</div><div class="card-meta">'+meta+'</div>'+tags+'</div></div>';
+  return'<div class="card" onclick="location.href=\'detail.html?type='+encodeURIComponent(type)+'&id='+encodeURIComponent(item.id||'')+'\'">'+photosHtml+'<div class="card-body"><div class="card-name">'(item.pinned?'📌 ':'')++esc(item.name)+'</div><div class="card-meta">'+meta+'</div>'+tags+'</div></div>';
 }
 function renderList(list,boxId,type){
   var box=document.getElementById(boxId);
-  var filtered=(list||[]).filter(function(t){return t.status==='已通过'});
+  var filtered=(list||[]).filter(function(t){return t.status==='已通过'});filtered.sort(function(a,b){var pa=a.pinned?1:0,pb=b.pinned?1:0;if(pa!==pb)return pb-pa;return(b.registerTime||b.updateTime||0)-(a.registerTime||a.updateTime||0)})
   if(!filtered.length){box.innerHTML='<div class="empty">暂无内容</div>';return}
   box.innerHTML=filtered.map(function(v){return renderCard(v,type)}).join('');
 }
