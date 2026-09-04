@@ -116,7 +116,7 @@ function renderCard(item,type){
   if(item.address)meta+='📍 '+esc(item.address)+'<br>';
   if(item.phone)meta+='📞 '+esc(item.phone);
   if(item.caseDesc)meta+=esc(item.caseDesc).substring(0,40)+(item.caseDesc.length>40?'…':'');
-  return'<div class="card" onclick="location.href=\'detail.html?type='+encodeURIComponent(type)+'&id='+encodeURIComponent(item.id||'')+'\'">'+photosHtml+'<div class="card-body"><div class="card-name">'(item.pinned?'📌 ':'')++esc(item.name)+'</div><div class="card-meta">'+meta+'</div>'+tags+'</div></div>';
+  return'<div class="card" onclick="location.href=\'detail.html?type='+encodeURIComponent(type)+'&id='+encodeURIComponent(item.id||'')+'\'">'+photosHtml+'<div class="card-body"><div class="card-name">'(item.pinned?'📌 ':'')+esc(item.name)+'</div><div class="card-meta">'+meta+'</div>'+tags+'</div></div>';
 }
 function renderList(list,boxId,type){
   var box=document.getElementById(boxId);
