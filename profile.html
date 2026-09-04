@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>个人中心 - 法律服务</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#F0F4F8;color:#1A202C;min-height:100vh;padding-bottom:80px;}
+.header{background:linear-gradient(135deg,#1A365D,#2B6CB0);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50;}
+.header a{color:#fff;text-decoration:none;font-size:14px;}
+.header span{flex:1;text-align:center;font-size:17px;font-weight:bold;}
+.not-login{text-align:center;padding:80px 20px;}
+.not-login-icon{font-size:56px;margin-bottom:16px;}
+.not-login p{color:#718096;margin-bottom:16px;font-size:14px;}
+.btn-primary{display:inline-block;padding:12px 32px;background:linear-gradient(135deg,#1A365D,#2B6CB0);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer;text-decoration:none;}
+.user-card{background:#fff;margin:12px 16px;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;align-items:center;gap:14px;}
+.avatar{width:56px;height:56px;border-radius:50%;background:#EBF8FF;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.user-info{flex:1;}
+.user-name{font-size:17px;font-weight:bold;color:#1A365D;}
+.user-role{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;background:#EBF8FF;color:#2B6CB0;margin-top:3px;}
+.user-role.lawyer{background:#F0FFF4;color:#2E7D32;}
+.user-role.assist{background:#FFFAF0;color:#C19A3B;}
+.status-pending{margin:0 16px 12px;padding:12px;border-radius:10px;background:#FFFAF0;border:1.5px solid #DD6B20;color:#DD6B20;text-align:center;font-size:14px;}
+.status-approved{margin:0 16px 12px;padding:12px;border-radius:10px;background:#F0FFF4;border:1.5px solid #2E7D32;color:#2E7D32;text-align:center;font-size:14px;}
+.status-rejected{margin:0 16px 12px;padding:12px;border-radius:10px;background:#FFF5F5;border:1.5px solid #C53030;color:#C53030;text-align:center;font-size:14px;}
+.status-none{margin:0 16px 12px;padding:12px;border-radius:10px;background:#F7FAFC;border:1.5px solid #CBD5E0;color:#718096;text-align:center;font-size:14px;}
+.section{margin:0 16px 12px;}
+.section-title{font-size:14px;font-weight:bold;color:#1A365D;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.form-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:13px;color:#4A5568;margin-bottom:5px;font-weight:500;}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:11px 13px;border:1.5px solid #CBD5E0;border-radius:10px;font-size:14px;background:#fff;box-sizing:border-box;outline:none;}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-group input:focus,.form-group textarea:focus{border-color:#2B6CB0;}
+.case-options{display:flex;flex-wrap:wrap;gap:7px;}
+.case-tag{padding:5px 11px;border:1.5px solid #CBD5E0;border-radius:18px;font-size:13px;cursor:pointer;background:#fff;color:#4A5568;}
+.case-tag.selected{border-color:#1A365D;background:#1A365D;color:#fff;}
+.photo-area{border:2px dashed #CBD5E0;border-radius:10px;padding:14px;text-align:center;background:#fff;}
+.photo-preview{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;justify-content:center;}
+.photo-item{position:relative;width:68px;height:68px;}
+.photo-item img{width:68px;height:68px;object-fit:cover;border-radius:8px;border:1.5px solid #E2E8F0;}
+.photo-item .del{position:absolute;top:-7px;right:-7px;width:20px;height:20px;background:#C53030;color:#fff;border-radius:50%;font-size:12px;line-height:20px;text-align:center;cursor:pointer;}
+.add-photo-btn{display:inline-block;width:68px;height:68px;border:2px dashed #CBD5E0;border-radius:8px;line-height:68px;font-size:26px;color:#A0AEC0;cursor:pointer;}
+.btn{width:100%;padding:13px;background:linear-gradient(135deg,#1A365D,#2B6CB0);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:6px;}
+.btn:active{transform:scale(.98);}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;padding:10px 24px;border-radius:10px;font-size:14px;z-index:99999;pointer-events:none;}
+.menu-item{padding:14px 16px;display:flex;align-items:center;gap:12px;font-size:14px;color:#1A202C;cursor:pointer;border-bottom:1px solid #F0F4F8;}
+.menu-item:last-child{border-bottom:none;}
+.menu-item:active{background:#F7FAFC;}
+</style>
+</head>
+<body>
+<div class="header">
+  <a href="index.html">&#x2190; 返回</a>
+  <span>&#x1F465; 个人中心</span>
+</div>
+<div id="notLogin" class="not-login" style="display:none;">
+  <div class="not-login-icon">&#x1F464;</div>
+  <p>您还未登录</p>
+  <a href="login.html" class="btn-primary">去登录</a>
+  <div style="margin-top:14px;"><a href="register.html" style="color:#2B6CB0;font-size:14px;">还没有账号？立即注册 &#x2192;</a></div>
+</div>
+<div id="loginInfo" style="display:none;">
+  <div id="userCard" class="user-card"></div>
+  <div id="statusArea"></div>
+  <div id="formSection">
+    <div class="section"><div class="section-title" id="formTitle">&#x1F4DD; 填写并提交资料</div></div>
+    <div class="form-card" id="formCard"></div>
+    <div style="padding:0 16px;"><button class="btn" id="submitBtn">提交审核</button></div>
+  </div>
+  <div id="readonlySection" style="display:none;">
+    <div class="section"><div class="section-title">&#x1F4CB; 已提交资料</div></div>
+    <div class="form-card" id="readonlyCard"></div>
+    <div style="padding:0 16px;" id="reeditArea"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">&#x2699; 其他</div>
+    <div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+      <div class="menu-item" id="syncBtn"><span style="font-size:18px;">&#x2601;</span><span>同步数据</span></div>
+      <div class="menu-item" onclick="location.href='notice.html'"><span style="font-size:18px;">&#x1F4E2;</span><span>公告列表</span></div>
+      <div class="menu-item" onclick="location.href='search.html'"><span style="font-size:18px;">&#x1F50D;</span><span>搜索律师</span></div>
+      <div class="menu-item" id="logoutBtn" style="color:#C53030;"><span style="font-size:18px;">&#x1F6AA;</span><span>退出登录</span></div>
+    </div>
+  </div>
+</div>
+<script>
+var JB={BINS:{accounts:'accounts',lawyer_assistants:'lawyer_assistants',lawyers:'lawyers',user_needs:'user_needs',notices:'notices',audit_log:'audit_log',accepted_cases:'accepted_cases'},_adapterNow:function(){try{return window.RoseSyncAdapter||null}catch(e){return null}},_storageKey:function(k){return'law_'+k},_unwrap:function(v){var d=0;while(d<5&&v&&typeof v==='object'&&'record' in v&&Object.keys(v).length<=2){v=v.record;d++}return v},_getLocal:function(k){try{var v=localStorage.getItem(this._storageKey(k));return v?this._unwrap(JSON.parse(v)):[]}catch(e){return[]}},_setLocal:function(k,d){try{localStorage.setItem(this._storageKey(k),JSON.stringify(d));return true}catch(e){if(typeof toast==='function')toast('存储满');return false}},_mergeLists:function(la,ca){var ds={};this.getDeleted('').forEach(function(id){ds[id]=true});var map={},nk=[];function ts(it){return(it&&(it.updateTime||it.time||it.registerTime))||0}function ko(it){return it&&(it.id||it.account||it.accountId)}function ad(it){if(!it||typeof it!=='object')return;var k=ko(it);if(k&&ds[k])return;if(!k){nk.push(it);return}if(!map[k])map[k]=[it,ts(it)];else if(ts(it)>map[k][1])map[k]=[it,ts(it)]}(ca||[]).forEach(ad);(la||[]).forEach(ad);var out=[];Object.keys(map).forEach(function(k){out.push(map[k][0])});return out.concat(nk)},get:function(k,cb){var lo=this._getLocal(k),ad=this._adapterNow();if(ad&&typeof ad.pull==='function'){var st=false;var fin=function(ca,ok){if(st)return;st=true;if(ok&&Array.isArray(ca)){var m=this._mergeLists(lo,ca);this._setLocal(k,m);cb(m,true,ca)}else cb(lo,false,lo)}.bind(this);ad.pull(k,fin);setTimeout(function(){fin(lo,false)},2500)}else setTimeout(function(){cb(lo,true,lo)},0)},put:function(k,d,cb){this._setLocal(k,d);var ad=this._adapterNow();if(ad&&typeof ad.push==='function'){var st=false;var fin=function(ok){if(st)return;st=true;if(typeof cb==='function')cb(ok)};ad.push(k,d,fin);setTimeout(function(){fin(false)},2500)}else if(typeof cb==='function')setTimeout(function(){cb(true)},0)},syncAll:function(cb){var ad=this._adapterNow();if(!ad){if(typeof cb==='function')cb(true);return}var self=this,keys=['accounts','lawyer_assistants','lawyers','user_needs','notices','audit_log','accepted_cases'],pend=keys.length;function dn(){pend--;if(pend<=0&&typeof cb==='function')cb(true)}keys.forEach(function(k){var snap=self._getLocal(k);self.get(k,function(m,ok,raw){if(!ok){dn();return}raw=raw||[];var mg=self._mergeLists(snap,raw);if(JSON.stringify(mg)===JSON.stringify(raw))dn();else self.put(k,mg,dn)})})},getCurrentUser:function(){try{var r=localStorage.getItem('law_current_user');return r?JSON.parse(r):null}catch(e){return null}},genId:function(){var ts=Date.now().toString(36);var r1=Math.random().toString(36).slice(2);var r2='';try{r2=crypto.getRandomValues(new Uint32Array(1))[0].toString(36)}catch(e){r2=Math.random().toString(36).slice(2)}return ts+r1+r2},_deletedKey:function(k){return'law_deleted_'+k},getDeleted:function(k){try{return JSON.parse(localStorage.getItem(this._deletedKey(k))||'[]')}catch(e){return[]}},markDeleted:function(k,id){if(!id)return;var d=this.getDeleted(k);if(d.indexOf(id)<0)d.push(id);try{localStorage.setItem(this._deletedKey(k),JSON.stringify(d))}catch(e){}}};setTimeout(function(){try{JB.syncAll()}catch(e){}},800);window.onerror=function(m,s,l,c){try{var d=document.createElement('div');d.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#c00;color:#fff;font-size:12px;padding:8px;z-index:99999;white-space:pre-wrap';d.textContent='Error: '+m+' ('+l+':'+c+')';(document.body||document.documentElement).appendChild(d)}catch(e){}return false};function toast(msg){var el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(function(){el.remove()},2200)}function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+</script>
+<script>
+var curUser=null;
+try{curUser=JSON.parse(localStorage.getItem('law_current_user')||'null')}catch(e){}
+var roleNames={user_need:'用户需求',lawyer_assistant:'律师助理',lawyer:'执业律师'};
+var roleIcons={user_need:'&#x1F4CB;',lawyer_assistant:'&#x1F4CE;',lawyer:'&#x2696;'};
+var binMap={user_need:'user_needs',lawyer_assistant:'lawyer_assistants',lawyer:'lawyers'};
+var CASE_TYPES=['交通事故','工商事故','人身损害','职业伤害','婚姻家庭','非诉案件','刑事案件','劳动争议','诉讼案件','其它案件'];
+var LIABILITY_TYPES=['主责','次责','同等责任','全责'];
+var selectedCaseType='';
+var selectedLiability='';
+var photos=[];
+var myProfile=null;
+if(!curUser){document.getElementById('notLogin').style.display='block';document.getElementById('loginInfo').style.display='none';}else{document.getElementById('notLogin').style.display='none';document.getElementById('loginInfo').style.display='block';initProfile();}
+function initProfile(){var role=curUser.role||'user_need';var rname=roleNames[role]||'';var rcls={user_need:'',lawyer_assistant:'assist',lawyer:'lawyer'}[role]||'';document.getElementById('userCard').innerHTML='<div class="avatar">'+roleIcons[role]+'</div><div class="user-info"><div class="user-name">'+esc(curUser.name||'')+'</div><div class="user-role '+rcls+'">'+rname+'</div></div>';loadMyProfile();}
+function loadMyProfile(){var bin=binMap[curUser.role];JB.get(bin,function(data){myProfile=(data||[]).find(function(v){return v.id===curUser.id});renderProfileState();});}
+function renderProfileState(){if(!myProfile||myProfile.status==='未完善'){document.getElementById('statusArea').innerHTML='<div class="status-none">&#x1F4DD; 请完善您的资料后提交审核</div>';document.getElementById('formSection').style.display='block';document.getElementById('readonlySection').style.display='none';renderForm(curUser.role);}else if(myProfile.status==='待审核'){document.getElementById('statusArea').innerHTML='<div class="status-pending">&#x23F3; 资料已提交，正在等待管理员审核&#8230;</div>';document.getElementById('formSection').style.display='none';document.getElementById('readonlySection').style.display='block';document.getElementById('readonlyCard').innerHTML=renderReadonlyCard(myProfile);document.getElementById('reeditArea').innerHTML='<button class="btn" style="background:#718096;" id="reeditBtn">修改资料重新提交</button>';document.getElementById('reeditBtn').onclick=startEdit;}else if(myProfile.status==='已通过'){document.getElementById('statusArea').innerHTML='<div class="status-approved">&#x2705; 您的资料已审核通过！</div>';document.getElementById('formSection').style.display='none';document.getElementById('readonlySection').style.display='block';document.getElementById('readonlyCard').innerHTML=renderReadonlyCard(myProfile);document.getElementById('reeditArea').innerHTML='';}else if(myProfile.status==='已拒绝'){document.getElementById('statusArea').innerHTML='<div class="status-rejected">&#x274C; 审核未通过，请修改后重新提交</div>';document.getElementById('formSection').style.display='block';document.getElementById('readonlySection').style.display='none';renderForm(curUser.role);}}
+function renderReadonlyCard(item){var photos2='';if(item.photos&&item.photos.length>0){photos2='<div style="margin-top:10px;"><div style="font-size:12px;color:#718096;margin-bottom:6px;">相关图片</div><div style="display:flex;gap:6px;flex-wrap:wrap;">';for(var i=0;i<item.photos.length;i++)photos2+='<img src="'+esc(item.photos[i])+'" style="width:64px;height:64px;object-fit:cover;border-radius:6px;" onerror="this.style.display=\'none\'>';photos2+='</div></div>';}var rows='';function row(label,val){if(!val)return'';return'<div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #F0F4F8;"><span style="color:#718096;min-width:80px;">'+label+'</span><span>'+val+'</span></div>'}function rowFull(label,val){if(!val)return'';return'<div style="padding:8px 0;border-bottom:1px solid #F0F4F8;"><div style="color:#718096;margin-bottom:4px;">'+label+'</div><div style="color:#1A202C;line-height:1.7;white-space:pre-wrap;">'+esc(val)+'</div></div>';}if(item.phone)rows+=row('联系电话',esc(item.phone));if(item.firm)rows+=row('执业律所',esc(item.firm));if(item.position)rows+=row('职位',esc(item.position));if(item.address)rows+=row('联系地址',esc(item.address));if(item.hospital)rows+=row('就诊医院',esc(item.hospital));if(item.liability)rows+=row('责任认定','<span style="padding:2px 8px;background:#FFF5F5;color:#C53030;border-radius:10px;font-size:13px;">'+esc(item.liability)+'</span>');if(item.caseType)rows+=row('案件类型','<span style="color:#2B6CB0;font-weight:500;">'+esc(item.caseType)+'</span>');if(item.caseDesc)rows+=rowFull('案情叙述',item.caseDesc);return rows+photos2;}
+function renderForm(role){var fc=document.getElementById('formCard');var titles={user_need:'&#x1F4CB; 填写法律需求',lawyer_assistant:'&#x1F4CE; 填写律师助理资料',lawyer:'&#x2696; 填写执业律师资料'};document.getElementById('formTitle').textContent=titles[role]||'&#x1F4DD; 填写资料';if(myProfile&&myProfile.status){selectedCaseType=myProfile.caseType||'';selectedLiability=myProfile.liability||'';photos=(myProfile.photos||[]).slice();}else{selectedCaseType='';selectedLiability='';photos=[];}var formHtml='';if(role==='user_need'){formHtml+='<div class="form-group"><label>姓名</label><input type="text" value="'+esc(curUser.name||'')+'" readonly style="background:#F7FAFC;color:#718096;cursor:not-allowed;"></div>';formHtml+='<div class="form-group"><label>联系电话</label><input id="fPhone" type="tel" placeholder="请输入联系电话" maxlength="20" value="'+esc(myProfile&&myProfile.phone||curUser.phone||'')+'"></div>';formHtml+='<div class="form-group"><label>案件类型 *</label><div class="case-options" id="caseOptions"></div></div>';formHtml+='<div class="form-group"><label>案情叙述 *</label><textarea id="fCaseDesc" placeholder="请详细描述您的法律需求和案情背景" maxlength="2000">'+esc(myProfile&&myProfile.caseDesc||'')+'</textarea></div>';formHtml+='<div class="form-group"><label>交警责任认定 *</label><div class="case-options" id="liabilityOptions"></div></div>';formHtml+='<div class="form-group"><label>就诊医院</label><input id="fHospital" type="text" placeholder="请输入就诊医院名称" maxlength="100" value="'+esc(myProfile&&myProfile.hospital||'')+'"></div>';formHtml+='<div class="form-group"><label>联系地址</label><input id="fAddress" type="text" placeholder="省/市/区/街道" maxlength="100" value="'+esc(myProfile&&myProfile.address||'')+'"></div>';formHtml+='<div class="form-group"><label>相关图片（最多9张）</label><div class="photo-area"><div class="photo-preview" id="photoPreview"></div><label class="add-photo-btn" id="addPhotoLbl">+</label></div><input type="file" id="photoInput" accept="image/*" multiple style="display:none"></div>';}else if(role==='lawyer_assistant'){formHtml+='<div class="form-group"><label>姓名</label><input type="text" value="'+esc(curUser.name||'')+'" readonly style="background:#F7FAFC;color:#718096;cursor:not-allowed;"></div>';formHtml+='<div class="form-group"><label>联系电话</label><input id="fPhone" type="tel" placeholder="请输入联系电话" maxlength="20" value="'+esc(myProfile&&myProfile.phone||curUser.phone||'')+'"></div>';formHtml+='<div class="form-group"><label>执业律所 *</label><input id="fFirm" type="text" placeholder="请输入律所全称" maxlength="100" value="'+esc(myProfile&&myProfile.firm||'')+'"></div>';formHtml+='<div class="form-group"><label>职位 *</label><input id="fPosition" type="text" placeholder="如：律师助理、实习律师、法律顾问等" maxlength="50" value="'+esc(myProfile&&myProfile.position||'')+'"></div>';formHtml+='<div class="form-group"><label>律所地址 *</label><input id="fAddress" type="text" placeholder="律所详细地址" maxlength="150" value="'+esc(myProfile&&myProfile.address||'')+'"></div>';formHtml+='<div class="form-group"><label>相关图片（最多9张）</label><div class="photo-area"><div class="photo-preview" id="photoPreview"></div><label class="add-photo-btn" id="addPhotoLbl">+</label></div><input type="file" id="photoInput" accept="image/*" multiple style="display:none"></div>';}else{formHtml+='<div class="form-group"><label>姓名</label><input type="text" value="'+esc(curUser.name||'')+'" readonly style="background:#F7FAFC;color:#718096;cursor:not-allowed;"></div>';formHtml+='<div class="form-group"><label>联系电话</label><input id="fPhone" type="tel" placeholder="请输入联系电话" maxlength="20" value="'+esc(myProfile&&myProfile.phone||curUser.phone||'')+'"></div>';formHtml+='<div class="form-group"><label>执业律所 *</label><input id="fFirm" type="text" placeholder="请输入律所全称" maxlength="100" value="'+esc(myProfile&&myProfile.firm||'')+'"></div>';formHtml+='<div class="form-group"><label>律所地址 *</label><input id="fAddress" type="text" placeholder="律所详细地址" maxlength="150" value="'+esc(myProfile&&myProfile.address||'')+'"></div>';formHtml+='<div class="form-group"><label>相关图片（最多9张）</label><div class="photo-area"><div class="photo-preview" id="photoPreview"></div><label class="add-photo-btn" id="addPhotoLbl">+</label></div><input type="file" id="photoInput" accept="image/*" multiple style="display:none"></div>';}fc.innerHTML=formHtml;document.getElementById('addPhotoLbl').onclick=function(){document.getElementById('photoInput').click()};document.getElementById('photoInput').onchange=function(){handlePhotos(this)};renderPhotoPreview();renderCaseOptions();if(role==='user_need')renderLiabilityOptions();}
+function renderCaseOptions(){var box=document.getElementById('caseOptions');if(!box)return;box.innerHTML=CASE_TYPES.map(function(v){return'<span class="case-tag'+(selectedCaseType===v?' selected':'')+'" data-val="'+v+'">'+v+'</span>';}).join('');box.querySelectorAll('.case-tag').forEach(function(el){el.onclick=function(){toggleCaseTag(this,v)}});}
+function renderLiabilityOptions(){var box=document.getElementById('liabilityOptions');if(!box)return;box.innerHTML=LIABILITY_TYPES.map(function(v){return'<span class="case-tag'+(selectedLiability===v?' selected':'')+'" data-val="'+v+'">'+v+'</span>';}).join('');box.querySelectorAll('.case-tag').forEach(function(el){el.onclick=function(){toggleLiabilityTag(this,v)}});}
+function toggleCaseTag(el,val){document.querySelectorAll('#caseOptions .case-tag').forEach(function(t){t.classList.remove('selected')});el.classList.add('selected');selectedCaseType=val;}
+function toggleLiabilityTag(el,val){document.querySelectorAll('#liabilityOptions .case-tag').forEach(function(t){t.classList.remove('selected')});el.classList.add('selected');selectedLiability=val;}
+function handlePhotos(input){if(!input.files||!input.files.length)return;for(var i=0;i<input.files.length;i++){if(photos.length>=9)break;var f=input.files[i];var reader=new FileReader();reader.onload=function(e){photos.push(e.target.result);renderPhotoPreview()};reader.readAsDataURL(f);}input.value='';}
+function renderPhotoPreview(){var box=document.getElementById('photoPreview');if(!box)return;var html='';for(var i=0;i<photos.length;i++){html+='<div class="photo-item"><img src="'+photos[i]+'"><span class="del" data-idx="'+i+'">x</span></div>';}box.innerHTML=html;box.querySelectorAll('.del').forEach(function(el){el.onclick=function(){delPhoto(parseInt(this.getAttribute('data-idx')))}});}
+function delPhoto(i){photos.splice(i,1);renderPhotoPreview()}
+function startEdit(){document.getElementById('formSection').style.display='block';document.getElementById('readonlySection').style.display='none';renderForm(curUser.role);}
+function submitProfile(){var role=curUser.role;var address='',caseDesc='',firm='',position='',hospital='',phone='';if(role==='user_need'){if(!selectedCaseType){toast('请选择案件类型');return}caseDesc=(document.getElementById('fCaseDesc')||{}).value||'';if(!caseDesc.trim()){toast('请填写案情叙述');return}if(!selectedLiability){toast('请选择交警责任认定');return}address=(document.getElementById('fAddress')||{}).value||'';hospital=(document.getElementById('fHospital')||{}).value||'';phone=(document.getElementById('fPhone')||{}).value||'';}else{firm=(document.getElementById('fFirm')||{}).value||'';if(!firm.trim()){toast('请填写执业律所');return}if(role==='lawyer_assistant'){position=(document.getElementById('fPosition')||{}).value||'';if(!position.trim()){toast('请填写职位');return}}address=(document.getElementById('fAddress')||{}).value||'';phone=(document.getElementById('fPhone')||{}).value||'';}toast('正在提交&#8230;');var bin=binMap[role];var record={id:curUser.id,name:curUser.name||'',phone:phone||curUser.phone||'',address:address,firm:firm,position:position,hospital:hospital,liability:selectedLiability,photos:photos,caseType:selectedCaseType,caseDesc:caseDesc,status:'待审核',registerTime:Date.now(),updateTime:Date.now()};JB.get(bin,function(data){data=data||[];var idx=data.findIndex(function(v){return v.id===curUser.id});if(idx>=0)data[idx]=record;else data.push(record);JB.put(bin,data,function(){myProfile=record;JB.get('accounts',function(accts){accts=accts||[];var ai=accts.findIndex(function(a){return a.id===curUser.id});if(ai>=0){accts[ai].status='待审核'}JB.put('accounts',accts,function(){try{var u=JSON.parse(localStorage.getItem('law_current_user')||'{}');u.status='待审核';localStorage.setItem('law_current_user',JSON.stringify(u));curUser=u}catch(e){}toast('提交成功 &#x2713; 等待管理员审核');renderProfileState();});});});});}
+function logout(){if(!confirm('确定退出登录？'))return;try{localStorage.removeItem('law_current_user')}catch(e){}location.href='index.html';}
+document.getElementById('submitBtn').onclick=submitProfile;
+document.getElementById('syncBtn').onclick=function(){JB.syncAll();toast('同步完成 &#x2713;')};
+document.getElementById('logoutBtn').onclick=logout;
+</script>
+<script src="cloud-config.js"></script>
+<script src="cloud-api.js"></script>
+</body>
+</html>
