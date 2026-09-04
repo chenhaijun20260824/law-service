@@ -53,7 +53,7 @@ var params={};
 try{location.search.slice(1).split('&').forEach(function(p){var kv=p.split('=');params[kv[0]]=decodeURIComponent(kv[1]||'')})}catch(e){}
 var type=params.type||'user_need';
 var id=params.id||'';
-var binMap={user_need:'user_needs',lawyer_assistants:'lawyer_assistants',lawyer:'lawyers'};
+var binMap={user_need:'user_needs',lawyer_assistant:'lawyer_assistants',lawyer:'lawyers'};
 var bin=binMap[type];
 var typeName={user_need:'用户需求',lawyer_assistant:'律师助理',lawyer:'执业律师'}[type]||'详情';
 document.getElementById('pageTitle').textContent=typeName+'详情';
@@ -90,10 +90,7 @@ function render(item){
     '</div></div>'+
     '<div class="info-section"><h3>详细信息</h3>'+meta+'</div>';
 }
-JB.get(bin,function(data){
-  var item=(data||[]).find(function(v){return v.id===id});
-  render(item);
-});
+function loadDetail(){JB.get(bin,function(data){var item=(data||[]).find(function(v){return v.id===id});render(item)})}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',loadDetail)}else{loadDetail()}
 </script>
 <script src="cloud-config.js"></script>
 <script src="cloud-api.js"></script>
