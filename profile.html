@@ -48,6 +48,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .menu-item{padding:14px 16px;display:flex;align-items:center;gap:12px;font-size:14px;color:#1A202C;cursor:pointer;border-bottom:1px solid #F0F4F8;}
 .menu-item:last-child{border-bottom:none;}
 .menu-item:active{background:#F7FAFC;}
+.pw-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:99998;padding:20px;}
+.pw-modal.show{display:flex;}
+.pw-box{background:#fff;border-radius:14px;width:100%;max-width:340px;padding:22px 18px;}
+.pw-title{font-size:16px;font-weight:bold;color:#1A365D;text-align:center;margin-bottom:16px;}
+.pw-group{margin-bottom:12px;}
+.pw-group label{display:block;font-size:13px;color:#4A5568;margin-bottom:5px;font-weight:500;}
+.pw-group input{width:100%;padding:10px 12px;border:1.5px solid #CBD5E0;border-radius:8px;font-size:14px;box-sizing:border-box;outline:none;background:#fff;}
+.pw-group input:focus{border-color:#2B6CB0;}
+.pw-group input.error{border-color:#C53030;}
+.pw-err{color:#C53030;font-size:12px;margin-top:4px;min-height:16px;}
+.pw-submit{width:100%;padding:12px;background:linear-gradient(135deg,#1A365D,#2B6CB0);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer;margin-top:6px;}
+.pw-submit:active{transform:scale(.98);}
+.pw-cancel{width:100%;margin-top:8px;padding:10px;background:#EDF2F7;color:#4A5568;border:none;border-radius:10px;font-size:14px;cursor:pointer;}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:99998;padding:20px;}
 .modal.show{display:flex;}
 .modal-box{background:#fff;border-radius:14px;width:100%;max-width:360px;padding:18px;}
@@ -92,6 +105,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       <div class="menu-item" id="syncBtn"><span style="font-size:18px;">&#x2601;</span><span>同步数据</span></div>
       <div class="menu-item" onclick="location.href='notice.html'"><span style="font-size:18px;">&#x1F4E2;</span><span>公告列表</span></div>
       <div class="menu-item" onclick="location.href='search.html'"><span style="font-size:18px;">&#x1F50D;</span><span>搜索律师</span></div>
+      <div class="menu-item" id="changePwdBtn"><span style="font-size:18px;">&#x1F511;</span><span>修改密码</span></div>
       <div class="menu-item" id="logoutBtn" style="color:#C53030;"><span style="font-size:18px;">&#x1F6AA;</span><span>退出登录</span></div>
     </div>
   </div>
@@ -102,6 +116,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     <div class="modal-tip">选择新的角色后，原角色已提交的资料将作废<br>需重新填写资料并提交管理员审核</div>
     <div class="role-opt-list"></div>
     <button class="modal-cancel" id="roleModalCancel">取消</button>
+  </div>
+</div>
+<div class="pw-modal" id="pwModal">
+  <div class="pw-box">
+    <div class="pw-title">&#x1F511; 修改登录密码</div>
+    <div class="pw-group"><label>当前密码</label><input id="pwOld" type="password" placeholder="请输入当前密码" maxlength="20" autocomplete="off"></div>
+    <div class="pw-group"><label>新密码（至少4位）</label><input id="pwNew1" type="password" placeholder="请输入新密码" maxlength="20" autocomplete="off"></div>
+    <div class="pw-group"><label>确认新密码</label><input id="pwNew2" type="password" placeholder="请再次输入新密码" maxlength="20" autocomplete="off"><div class="pw-err" id="pwErr"></div></div>
+    <button class="pw-submit" id="pwSubmitBtn">确认修改</button>
+    <button class="pw-cancel" id="pwCancelBtn">取消</button>
   </div>
 </div>
 <script>
@@ -139,9 +163,17 @@ function submitProfile(){var role=curUser.role;var address='',caseDesc='',firm='
 function openRoleChange(){if(!curUser)return;var box=document.getElementById('roleModal');var opts=[['user_need','&#x1F4CB;','用户需求'],['lawyer_assistant','&#x1F4CE;','律师助理'],['lawyer','&#x2696;','执业律师']];var h='';for(var i=0;i<opts.length;i++){var k=opts[i][0];h+='<div class="role-opt'+(curUser.role===k?' selected':'')+'" data-role="'+k+'"><span class="role-opt-icon">'+opts[i][1]+'</span><div class="role-opt-name">'+opts[i][2]+'</div></div>'}box.querySelector('.role-opt-list').innerHTML=h;box.querySelectorAll('.role-opt').forEach(function(el){el.onclick=function(){var r=this.getAttribute('data-role');if(r===curUser.role){toast('当前已是该角色');return}if(!confirm('确定将注册角色改为「'+(roleNames[r]||r)+'」？\n原角色已提交的资料将作废，需重新填写并提交审核。'))return;changeRole(r)}});document.getElementById('roleModalCancel').onclick=closeRoleChange;box.classList.add('show')}
 function closeRoleChange(){var b=document.getElementById('roleModal');if(b)b.classList.remove('show')}
 function changeRole(newRole){var oldRole=curUser.role||'user_need';var oldBin=binMap[oldRole];if(!oldBin)return;toast('正在修改角色…');JB.get(oldBin,function(data){data=data||[];var idx=data.findIndex(function(v){return v.id===curUser.id});if(idx>=0){data[idx].status='已撤销';data[idx].updateTime=Date.now();data[idx].revokedTo=roleNames[newRole]||newRole}JB.put(oldBin,data,function(){JB.get('accounts',function(accts){accts=accts||[];var ai=accts.findIndex(function(a){return a.id===curUser.id});if(ai>=0){accts[ai].role=newRole;accts[ai].status='未完善'}JB.put('accounts',accts,function(){try{var u=JSON.parse(localStorage.getItem('law_current_user')||'{}');u.role=newRole;u.status='未完善';localStorage.setItem('law_current_user',JSON.stringify(u));curUser=u}catch(e){}myProfile=null;photos=[];selectedCaseType='';selectedLiability='';initProfile();toast('角色已修改为「'+(roleNames[newRole]||newRole)+'」，请重新填写资料');})})})})}
+function openPasswordModal(){document.getElementById("pwOld").value="";document.getElementById("pwNew1").value="";document.getElementById("pwNew2").value="";document.getElementById("pwErr").textContent="";document.getElementById("pwOld").classList.remove("error");document.getElementById("pwNew1").classList.remove("error");document.getElementById("pwNew2").classList.remove("error");document.getElementById("pwModal").classList.add("show");setTimeout(function(){document.getElementById("pwOld").focus()},100)}
+function closePasswordModal(){document.getElementById("pwModal").classList.remove("show")}
+function doChangePassword(){var oldPwd=document.getElementById("pwOld").value;var newPwd1=document.getElementById("pwNew1").value;var newPwd2=document.getElementById("pwNew2").value;var err=document.getElementById("pwErr");err.textContent="";document.getElementById("pwOld").classList.remove("error");document.getElementById("pwNew1").classList.remove("error");document.getElementById("pwNew2").classList.remove("error");if(!oldPwd){document.getElementById("pwOld").classList.add("error");err.textContent="请输入当前密码";return}if(!newPwd1||newPwd1.length<4){document.getElementById("pwNew1").classList.add("error");err.textContent="新密码至少4位";return}if(newPwd1!==newPwd2){document.getElementById("pwNew2").classList.add("error");err.textContent="两次新密码不一致";return}if(oldPwd===newPwd1){err.textContent="新密码不能与当前密码相同";return}toast("\u63d0\u4ea4\u4e2d\u2026");document.getElementById("pwSubmitBtn").disabled=true;JB.get("accounts",function(data){data=data||[];var ai=data.findIndex(function(a){return a.id===curUser.id});if(ai<0){err.textContent="\u8d26\u53f7\u4e0d\u5b58\u5728";document.getElementById("pwSubmitBtn").disabled=false;return}if(data[ai].password!==oldPwd){document.getElementById("pwOld").classList.add("error");err.textContent="\u5f53\u524d\u5bc6\u7801\u9519\u8bef";document.getElementById("pwSubmitBtn").disabled=false;return}data[ai].password=newPwd1;JB.put("accounts",data,function(){try{var u=JSON.parse(localStorage.getItem("law_current_user")||"{}");u.password=newPwd1;localStorage.setItem("law_current_user",JSON.stringify(u));curUser=u}catch(e){}toast("\u5bc6\u7801\u4fee\u6539\u6210\u529f \u2713");closePasswordModal();document.getElementById("pwSubmitBtn").disabled=false})})}
 function logout(){if(!confirm('确定退出登录？'))return;try{localStorage.removeItem('law_current_user')}catch(e){}location.href='index.html';}
 document.getElementById('submitBtn').onclick=submitProfile;
 document.getElementById('roleChangeBtn').onclick=openRoleChange;
+document.getElementById('changePwdBtn').onclick=openPasswordModal;
+document.getElementById('pwSubmitBtn').onclick=doChangePassword;
+document.getElementById('pwCancelBtn').onclick=closePasswordModal;
+document.getElementById('pwOld').addEventListener('keydown',function(e){if(e.key==='Enter')doChangePassword()});
+document.getElementById('pwNew2').addEventListener('keydown',function(e){if(e.key==='Enter')doChangePassword()});
 document.getElementById('syncBtn').onclick=function(){JB.syncAll();toast('同步完成 &#x2713;')};
 document.getElementById('logoutBtn').onclick=logout;
 </script>
