@@ -54,18 +54,24 @@
     return 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + filePath('%BIN%');
   }
 
+  function fetchText(url) {
+    return fetch(url).then(function (r) {
+      if (r.status === 200) return r.text();
+      if (r.status === 404) return '[]'; // 桶不存在 → 空数组
+      throw new Error('HTTP ' + r.status);
+    });
+  }
   function pull(binKey, cb) {
-    fetch(rawUrl(binKey))
-      .then(function (r) {
-        if (r.status === 200) return r.text();
-        if (r.status === 404) return '[]'; // 桶不存在 → 空数组
-        throw new Error('raw HTTP ' + r.status);
-      })
-      .then(function (txt) {
-        try { var a = JSON.parse(txt); cb(Array.isArray(a) ? a : [], true); }
-        catch (e) { cb([], true); }
-      })
-      .catch(function () { cb([], false); });
+    function done(txt) {
+      try { var a = JSON.parse(txt); cb(Array.isArray(a) ? a : [], true); }
+      catch (e) { cb([], true); }
+    }
+    function viaCdn() {
+      // raw.githubusercontent.com 在部分网络(手机/微信)会被拦截，回退 jsDelivr CDN
+      var cdn = 'https://cdn.jsdelivr.net/gh/' + cfg.owner + '/' + cfg.repo + '@' + cfg.branch + '/' + filePath(binKey);
+      fetchText(cdn).then(done).catch(function () { cb([], false); });
+    }
+    fetchText(rawUrl(binKey)).then(done).catch(viaCdn);
   }
 
   function getSha(binKey) {
