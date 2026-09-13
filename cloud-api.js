@@ -134,6 +134,9 @@
   }
 
   // 上传一张图片到 {repo}/images/{filename}，返回 raw.githubusercontent.com 的 CDN 链接
+  // 图片统一上传到"站点仓库"（与网页同域名），避免 raw.githubusercontent.com 在部分网络下加载失败
+  var IMG_REPO = 'law-service';
+  function imgBase() { return 'https://' + cfg.owner + '.github.io/' + IMG_REPO + '/images/'; }
   function uploadImage(filename, blob, cb) {
     if (!cfg || !blob) { cb(null); return; }
     var reader = new FileReader();
@@ -142,7 +145,7 @@
       var comma = dataUrl.indexOf(',');
       var b64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
       var imgPath = 'images/' + filename;
-      fetch('https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + imgPath, {
+      fetch('https://api.github.com/repos/' + cfg.owner + '/' + IMG_REPO + '/contents/' + imgPath, {
         method: 'PUT',
         headers: {
           'Authorization': 'token ' + cfg.token,
@@ -154,7 +157,7 @@
       .then(function (r) { return r.json(); })
       .then(function (j) {
         if (j && j.content && j.content.path) {
-          cb('https://raw.githubusercontent.com/' + cfg.owner + '/' + cfg.repo + '/' + cfg.branch + '/' + imgPath);
+          cb(imgBase() + filename);
         } else {
           console.warn('[cloud] image upload failed:', j && j.message);
           cb(null);
